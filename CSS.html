@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>我的起始页</title>
+    <link rel="icon" href="logo2.ico" />
+    <link rel="stylesheet" href="todolist.css" />
+    <style>
+      body {
+        margin: 0px;
+        height: 100vh;
+        background-color: #d1d9e6;
+      }
+
+      .flex {
+        display: flex;
+      }
+      .flex1 {
+        flex: 1;
+      }
+      .white {
+        background-color: white;
+      }
+      .column {
+        flex-direction: column;
+      }
+      #searchBar {
+        height: 100%;
+        width: 100%;
+        border: none;
+        outline: 0;
+        background-color: transparent;
+        text-align: center;
+        font-size: large;
+        justify-self: center;
+      }
+      #searchBarIcon {
+        display: flex;
+      }
+      #bingIcon {
+        height: 28px;
+        align-self: center;
+      }
+      #searchIcon {
+        height: 28px;
+        align-self: flex-end;
+      }
+      #searchButton {
+        height: fit-content;
+        width: fit-content;
+        background-color: transparent;
+        border: 0;
+        align-self: center;
+      }
+    </style>
+  </head>
+  <body class="flex column">
+    <div
+      class="flex white"
+      style="
+        width: 500px;
+        height: 5vh;
+        border-radius: 25px;
+        align-self: center;
+        justify-content: space-around;
+        margin: 10vh auto 5vh;
+        box-shadow: 5px 5px 20px #d1d9e6, -6px -6px 20px #fff;
+      "
+    >
+      <!--搜索栏-->
+
+      <form
+        action="http://cn.bing.com/search"
+        target="_blank"
+        id="searchBarIcon"
+      >
+        <input
+          type="text"
+          id="searchBar"
+          name="q"
+          size="38"
+          autocomplete="off"
+          autofocus
+        />
+      </form>
+    </div>
+    <div class="flex flex1" style="justify-content: space-between">
+      <!--主区域-->
+      <div
+        class="white"
+        style="
+          width: 15vw;
+          max-height: 700px;
+          border-radius: 35px;
+          margin-left: 20px;
+          box-shadow: 5px 5px 20px #d1d9e6, -6px -6px 20px #fff;
+        "
+      >
+        <!--应用区-->
+      </div>
+      <div
+        class="white flex1"
+        style="
+          margin: 30px;
+          max-height: 600px;
+          border-radius: 35px;
+          box-shadow: 5px 5px 20px #d1d9e6, -6px -6px 20px #fff;
+        "
+      >
+        <!--常用网页区-->
+        v0.3
+      </div>
+      <div
+        class="white"
+        style="
+          width: 30vw;
+          max-height: 700px;
+          border-radius: 35px;
+          margin-right: 20px;
+          box-shadow: 5px 5px 20px #d1d9e6, -6px -6px 20px #fff;
+        "
+      >
+        <!--提醒事项区-->
+      </div>
+    </div>
+  </body>
+  <!--<script>
+    search = document.querySelector("input");
+    document.addEventListener("keyup", function (e) {
+      if (e.keyCode === 83 || e.keyCode === 115) {
+        console.log("keyup:" + e.keyCode);
+        search.focus();
+      }
+    });
+  </script>-->
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+    $(function () {
+
+    });
+  </script>
+  <script>
+    var title_ele = document.getElementById("title");
+    var todolist_ele = document.getElementById("todolist");
+    var donelist_ele = document.getElementById("donelist");
+    var section_ele = document.getElementById("section");
+    // 功能1，添加待办事项
+    addEvent(title_ele, "keydown", function (e) {
+      var keyCode = e.which || e.keyCode;
+      var obj = {
+        tag_name: "li",
+        children: [
+          {
+            tag_name: "input",
+            attributes: {
+              type: "checkbox",
+              class: "checkbox",
+            },
+          },
+          {
+            tag_name: "p",
+            content: title_ele.value,
+          },
+          {
+            tag_name: "a",
+            attributes: {
+              href: "javascript:void(0)",
+            },
+            content: "-",
+          },
+        ],
+      };
+      if (keyCode === 13) {
+        console.log(title_ele.value);
+        if (title_ele.value === "") {
+          alert("请输入待办事项内容，再按Enter确认");
+        } else {
+          todolist_ele.insertBefore(createEle(obj), todolist_ele.childNodes[0]);
+          window.localStorage.setItem("1", title_ele.value);
+          title_ele.value = "";
+        }
+      }
+    });
+
+    // 功能2，完成待办事项
+    addEvent(todolist_ele, "change", ".checkbox", function () {
+      donelist_ele.insertBefore(this.parentNode, donelist_ele.childNodes[0]);
+    });
+
+    // 功能3，重置已完成事项
+    addEvent(donelist_ele, "change", ".checkbox", function () {
+      todolist_ele.insertBefore(this.parentNode, todolist_ele.childNodes[0]);
+    });
+
+    // 功能4，删除事项
+    addEvent(section_ele, "click", "a", function () {
+      this.parentNode.remove();
+    });
+
+    // 功能5，修改事项内容
+    addEvent(todolist_ele, "click", "p", function () {
+      var insert_html = '<input value="' + this.innerText + '">';
+      this.innerHTML = insert_html;
+      this.children[0].select();
+      addEvent(this.children[0], "blur", function () {
+        this.parentNode.innerText = this.value;
+      });
+      addEvent(this.children[0], "keydown", function (e) {
+        var keyCode = e.which || e.keyCode;
+        if (keyCode === 13) {
+          this.parentNode.innerText = this.value;
+        }
+      });
+    });
+
+    // 生成随机ID
+    function guid() {
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+        /[xy]/g,
+        function (c) {
+          var r = (Math.random() * 16) | 0,
+            v = c == "x" ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        }
+      );
+    }
+
+    // 封装创建元素的函数
+    function createEle(obj) {
+      var node = document.createElement(obj.tag_name);
+      if (obj.attributes) {
+        // 若属性存在，则遍历属性添加给node
+        for (var attr in obj.attributes) {
+          node.setAttribute(attr, obj.attributes[attr]);
+        }
+      }
+      if (obj.content) {
+        // 若内容存在，则将内容插入节点中
+        node.innerText = obj.content;
+      }
+      if (obj.children && obj.children.length > 0) {
+        // 若子集存在，则遍历子集，递归调用createEle()
+        for (var i = 0; i < obj.children.length; i++) {
+          node.appendChild(createEle(obj.children[i]));
+        }
+      }
+      return node;
+    }
+
+    // 封装事件委托和事件监听
+    function addEvent(ele, event_type, cb_or_selector, cb) {
+      // 若传入的是4个参数且第三个参数是字符串，说明是添加事件委托
+      if (arguments.length === 4 && typeof cb_or_selector === "string") {
+        // 添加事件委托，获取事件目标
+        ele.addEventListener(event_type, function (evt) {
+          var e = evt || event;
+          var target = e.target || e.srcElement;
+          // 根据传入的字符串判断选择器类型
+          switch (cb_or_selector.substr(0, 1)) {
+            case ".":
+              var selector_type = "className";
+              var selector_name = cb_or_selector.slice(1);
+              break;
+            case "#":
+              var selector_type = "id";
+              var selector_name = cb_or_selector.slice(1);
+              break;
+            default:
+              var selector_type = "nodeName";
+              var selector_name = cb_or_selector.toUpperCase();
+          }
+          // 封装事件冒泡逐层向上查找事件目标
+          while (target !== ele) {
+            // 验证事件目标
+            if (target[selector_type] === selector_name) {
+              // 使用call改变this指向
+              cb.call(target, e);
+              break;
+            }
+            target = target.parentNode;
+          }
+        });
+        // 若逻辑只有两种，可以使用 return false
+        return false;
+      }
+      // 若传入三个参数，说明是添加事件监听
+      ele.addEventListener(event_type, cb_or_selector);
+    }
+  </script>
+</html>
